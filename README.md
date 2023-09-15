@@ -1,2 +1,2 @@
 # Spring-data
-Spring Jpa Demo
+Spring JPA Demo
