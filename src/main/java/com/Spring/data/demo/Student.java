@@ -3,6 +3,9 @@ package com.Spring.data.demo;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "Student")
 @Table(name="student",
         uniqueConstraints = {
@@ -30,6 +33,20 @@ public class Student {
     private String email;
     @Column(name = "age",nullable = false)
     private int age;
+
+    @OneToOne(
+            mappedBy = "student",
+            orphanRemoval = true
+    )
+    private StudentCard studentCard;
+
+    @OneToMany(
+            mappedBy = "student",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},  // cascade operations to be applied when changes are made to the Student entity
+            fetch = FetchType.LAZY
+    )
+    private List<Book> books = new ArrayList<>();
 
     public Student( String firstName, String lastName, String email, int age) {
         this.firstName = firstName;
@@ -79,6 +96,28 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public StudentCard getStudentCard() {
+        return studentCard;
+    }
+
+    public void setStudentCard(StudentCard studentCard) {
+        this.studentCard = studentCard;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+    public void addBook(Book book){
+        if(!this.books.contains(book)){
+            this.books.add(book);
+            book.setStudent(this);
+        }
+        else{
+            this.books.remove(book);
+            book.setStudent(null);
+        }
     }
 
     @Override
